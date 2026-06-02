@@ -983,6 +983,15 @@ do
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   require 'custom.plugins'
    local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+
+vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
+
+
+
+
+
+
+
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
