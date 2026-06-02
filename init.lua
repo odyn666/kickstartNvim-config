@@ -741,7 +741,7 @@ do
     gh 'mason-org/mason.nvim',
     gh 'mason-org/mason-lspconfig.nvim',
     gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
-    gh 'mfussenegger/nvim-jdtls',
+    -- gh 'mfussenegger/nvim-jdtls',
 
   }
 
@@ -765,6 +765,66 @@ do
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+  vim.pack.add({
+    {
+      src = 'https://github.com/JavaHello/spring-boot.nvim',
+      version = '218c0c26c14d99feca778e4d13f5ec3e8b1b60f0',
+    },
+    'https://github.com/MunifTanjim/nui.nvim',
+    'https://github.com/mfussenegger/nvim-dap',
+
+    'https://github.com/nvim-java/nvim-java',
+})
+
+require('java').setup({
+  -- Startup checks
+  checks = {
+    nvim_version = true,        -- Check Neovim version
+    nvim_jdtls_conflict = true, -- Check for nvim-jdtls conflict
+  },
+
+  -- JDTLS configuration
+  jdtls = {
+    version = '1.43.0',
+  },
+
+  -- Extensions
+  lombok = {
+    enable = true,
+    version = '1.18.40',
+  },
+
+  java_test = {
+    enable = true,
+    version = '0.40.1',
+  },
+
+  java_debug_adapter = {
+    enable = true,
+    version = '0.58.2',
+  },
+
+  spring_boot_tools = {
+    enable = true,
+    version = '1.55.1',
+  },
+
+  -- JDK installation
+  jdk = {
+    auto_install = true,
+    version = '17',
+  },
+
+  -- Logging
+  log = {
+    use_console = true,
+    use_file = true,
+    level = 'info',
+    log_file = vim.fn.stdpath('state') .. '/nvim-java.log',
+    max_lines = 1000,
+    show_location = false,
+  },
+})
 
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
@@ -891,7 +951,7 @@ local capabilities = require("blink.cmp").get_lsp_capabilities()
 
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
-    capabilities = capabilities,
+    -- capabilities = capabilities,
 
   }
 end
