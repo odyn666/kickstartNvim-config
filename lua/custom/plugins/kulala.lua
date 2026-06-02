@@ -8,41 +8,47 @@ vim.pack.add({
 })
 
 local kulala = require("kulala")
+local environments = { "local", "dev", "stage", "prod" }
 
+local env_choice="dev";
 -- 2. KONFIGURACJA ZGODNA Z NAJNOWSZYM API
 kulala.setup({
   global_keymaps = false,
   global_keymaps_prefix = "<leader>R",
   kulala_keymaps_prefix = "",
-  -- Ustawiamy domyślne środowisko na poziomie konfiguracji wtyczki,
-  -- dzięki czemu kulala wie, że ma szukać bloku "dev" w Twoim pliku json.
-  default_env = "dev",
+  default_env = env_choice,
   environment_scope = "bft",
 })
 
--- 3. MAPOWANIA KLAWISZY (Używamy wyłącznie bezpiecznego, publicznego API)
+-- 3. MAPOWANIA KLAWISZY
 vim.keymap.set("n", "<leader>Rs", function()
   kulala.run()
 end, { desc = "Send request" })
 
--- Jeśli kiedykolwiek zechcesz zmienić środowisko z palca, 
--- używamy wbudowanej komendy Vim, która jest odporna na zmiany w Lua API:
--- Funkcja z zaszytymi na sztywno opcjami środowisk do wyboru
+-- NAPRAWIONA FUNKCJA: Wybieranie środowiska za pomocą stabilnych komend Vima
 vim.keymap.set("n", "<leader>Re", function()
-  local environments = { "local", "dev", "stage", "prod" }
   
   vim.ui.select(environments, {
     prompt = "Wybierz środowisko HTTP:",
   }, function(choice)
     if choice then
-      -- Bezpieczna próba ustawienia środowiska w Kulala
-      pcall(function()
-        require('kulala.parser.env').set_env(choice)
-      end)
+      -- Kulala rejestruje komendy Vim w formacie KulalaEnv<NazwaŚrodowiska>
+      -- np. :KulalaEnvDev, :KulalaEnvLocal. Używamy pierwszej litery jako wielkiej.
+      local cmd_env = choice:sub(1,1):upper() .. choice:sub(2)
+      local cmd = "KulalaEnv" .. cmd_env
+
+      -- Wykonujemy komendę w edytorze i sprawdzamy czy istnieje
+      local success = pcall(vim.cmd, cmd)
+      
+      -- Jeśli specyficzna komenda nie istnieje, używamy uniwersalnej komendy z argumentem
+      if not success then
+        pcall(vim.cmd, "KulalaEnvSelect " .. choice)
+      end
+      kulala.set_selected_env(choice)
       vim.notify("Aktywne środowisko: " .. choice, vim.log.levels.INFO)
     end
   end)
-end, { desc = "Select HTTP Environment (Hardcoded)" })
+end, { desc = "Select HTTP Environment (Hardcoded Fix)" })
 
 vim.keymap.set("n", "<leader>Ra", function() kulala.run_all() end, { desc = "Send all requests" })
 vim.keymap.set("n", "<leader>Rb", function() kulala.scratchpad() end, { desc = "Open scratchpad" })
@@ -64,7 +70,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
     for i, line in ipairs(lines) do
       local original = line
-      -- Usunięcie ukrytych spacji webowych i znaków powrotu karetki \r z maszyn wirtualnych
       line = line:gsub("\194\160", " "):gsub("\r", "")
       if line ~= original then
         lines[i] = line
