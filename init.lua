@@ -761,6 +761,7 @@ do
     'ktlint',
     'jdtls',
     'detekt',
+    'json-lsp',
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -909,7 +910,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'kotlin','java' }
+  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'kotlin','java','json','env' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -986,11 +987,22 @@ do
 
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
 
-
-
-
-
-
+-- Automatyczna naprawa plików .http przy każdym zapisie (:w)
+-- Tworzy komendę :NaprawHttp, którą możesz wpisać ręcznie
+-- vim.api.nvim_create_user_command('NaprawHttp', function()
+--   -- 1. Usuń ukryte spacje webowe
+--   vim.cmd([[%s/\%u00a0/ /ge]])
+--   -- 2. Usuń spacje wokół znaku równości dla zmiennych
+--   vim.cmd([[%s/^\s*@\(\w\+\)\s*=\s*/@\1=/e]])
+--   -- 3. Usuń spacje z końca linii
+--   vim.cmd([[%s/\s\+$//e]])
+--   print("Plik HTTP został naprawiony!")
+-- end, {})
+--
+-- Skrót: <leader>ev (np. spacja + e + v) otworzy wybór środowiska
+vim.keymap.set('n', '<leader>ev', function()
+  require('kulala').select_env()
+end, { desc = "Wybierz środowisko HTTP" })
 
 end
 
