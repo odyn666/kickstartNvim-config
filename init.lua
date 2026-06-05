@@ -686,8 +686,8 @@ do
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
-     -- clangd = {},
-     --gopls = {},
+    -- clangd = {},
+    --gopls = {},
     --  pyright = {},
     -- -- rust_analyzer = {},
     --
@@ -695,11 +695,11 @@ do
     --    https://github.com/pmizio/typescript-tools.nvim
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
-     -- ts_ls = {},
-    kotlin_lsp={},
+    -- ts_ls = {},
+    kotlin_lsp = {},
     jdtls = {},
-    stylua = {},-- Used to format Lua code
-    ktlint={},
+    stylua = {}, -- Used to format Lua code
+    ktlint = {},
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -742,7 +742,7 @@ do
     gh 'mason-org/mason-lspconfig.nvim',
     gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
     -- gh 'mfussenegger/nvim-jdtls',
-
+    gh 'fei6409/log-highlight.nvim',
   }
 
   -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -765,7 +765,7 @@ do
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-  vim.pack.add({
+  vim.pack.add {
     {
       src = 'https://github.com/JavaHello/spring-boot.nvim',
       version = '218c0c26c14d99feca778e4d13f5ec3e8b1b60f0',
@@ -774,57 +774,57 @@ do
     'https://github.com/mfussenegger/nvim-dap',
 
     'https://github.com/nvim-java/nvim-java',
-})
+  }
 
-require('java').setup({
-  -- Startup checks
-  checks = {
-    nvim_version = true,        -- Check Neovim version
-    nvim_jdtls_conflict = true, -- Check for nvim-jdtls conflict
-  },
-
-  -- JDTLS configuration
-  jdtls = {
-    version = '1.43.0',
-  },
-
-  -- Extensions
-  lombok = {
-    enable = true,
-    version = '1.18.40',
-  },
-
-  java_test = {
-    enable = true,
-    version = '0.40.1',
-  },
-
-  java_debug_adapter = {
-    enable = true,
-    version = '0.58.2',
-  },
-
-  spring_boot_tools = {
-    enable = true,
-    version = '1.55.1',
-  },
-
-  -- JDK installation
-  jdk = {
-    auto_install = true,
-    version = '17',
-  },
-
-  -- Logging
-  log = {
-    use_console = true,
-    use_file = true,
-    level = 'info',
-    log_file = vim.fn.stdpath('state') .. '/nvim-java.log',
-    max_lines = 1000,
-    show_location = false,
-  },
-})
+  require('java').setup {
+    -- Startup checks
+    checks = {
+      nvim_version = true, -- Check Neovim version
+      nvim_jdtls_conflict = true, -- Check for nvim-jdtls conflict
+    },
+    --
+    -- -- JDTLS configuration
+    -- jdtls = {
+    --   version = '1.43.0',
+    -- },
+    --
+    -- -- Extensions
+    -- lombok = {
+    --   enable = true,
+    --   version = '1.18.40',
+    -- },
+    --
+    -- java_test = {
+    --   enable = true,
+    --   version = '0.40.1',
+    -- },
+    --
+    -- java_debug_adapter = {
+    --   enable = true,
+    --   version = '0.58.2',
+    -- },
+    --
+    -- spring_boot_tools = {
+    --   enable = true,
+    --   version = '1.55.1',
+    -- },
+    --
+    -- -- JDK installation
+    -- jdk = {
+    --   auto_install = true,
+    --   version = '17',
+    -- },
+    --
+    -- Logging
+    log = {
+      use_console = true,
+      use_file = true,
+      level = 'info',
+      log_file = vim.fn.stdpath 'state' .. '/nvim-java.log',
+      max_lines = 1000,
+      show_location = false,
+    },
+  }
 
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
@@ -892,7 +892,7 @@ do
   -- [[ Autocomplete Engine ]]
   vim.pack.add { { src = gh 'saghen/blink.cmp', version = vim.version.range '1.*' } }
 
-local capabilities = require("blink.cmp").get_lsp_capabilities()
+  local capabilities = require('blink.cmp').get_lsp_capabilities()
   require('blink.cmp').setup {
     keymap = {
       -- 'default' (recommended) for mappings similar to built-in completions
@@ -952,7 +952,6 @@ local capabilities = require("blink.cmp").get_lsp_capabilities()
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
     -- capabilities = capabilities,
-
   }
 end
 
@@ -970,7 +969,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'kotlin','java','json','env' }
+  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'kotlin', 'java', 'json' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -1031,39 +1030,23 @@ do
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  
-   require 'kickstart.plugins.debug'
-   require 'kickstart.plugins.indent_line'
-   require 'kickstart.plugins.lint'
-   require 'kickstart.plugins.autopairs'
-   require 'kickstart.plugins.neo-tree'
-   require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
+
+  require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.neo-tree'
+  require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
 
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   require 'custom.plugins'
-   local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 
-vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
-
--- Automatyczna naprawa plików .http przy każdym zapisie (:w)
--- Tworzy komendę :NaprawHttp, którą możesz wpisać ręcznie
--- vim.api.nvim_create_user_command('NaprawHttp', function()
---   -- 1. Usuń ukryte spacje webowe
---   vim.cmd([[%s/\%u00a0/ /ge]])
---   -- 2. Usuń spacje wokół znaku równości dla zmiennych
---   vim.cmd([[%s/^\s*@\(\w\+\)\s*=\s*/@\1=/e]])
---   -- 3. Usuń spacje z końca linii
---   vim.cmd([[%s/\s\+$//e]])
---   print("Plik HTTP został naprawiony!")
--- end, {})
---
--- Skrót: <leader>ev (np. spacja + e + v) otworzy wybór środowiska
-vim.keymap.set('n', '<leader>ev', function()
-  require('kulala').select_env()
-end, { desc = "Wybierz środowisko HTTP" })
-
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
+  vim.pack.add { { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' } }
+  local mocha = require('catppuccin.palettes').get_palette 'mocha'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
